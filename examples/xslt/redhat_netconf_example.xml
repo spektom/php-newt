@@ -1,0 +1,14 @@
+<window width="41" height="17" title="Choose a Tool" backtitle="Test Mode Setup Utility 1.12 (c) 1999-2002 RedHat, Inc">
+<form id="form">
+	<listbox id="listbox" left="3" top="2" height="10">
+		<item id="item1">Authentication configuration</item>
+		<item id="item2">Firewall configuration</item>
+		<item id="item3">Mouse configuration</item>
+		<item id="item4">Network configuration</item>
+		<item id="item5">Printer configuration</item>
+		<item id="item6">System services</item>
+	</listbox>
+	<button id="button1" left="7" top="13">Run Tool</button>
+	<button id="button2" left="23" top="13">Quit</button>
+</form>
+</window>
