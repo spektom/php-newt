@@ -1692,10 +1692,12 @@ PHP_FUNCTION(newt_listbox_get_selection)
 
 	array_init (return_value);
 	if (retval) {
+		MAKE_STD_ZVAL (z_val);
 		for (i=0; i < num_items; i++ ) {
 			PHP_NEWT_FETCH_DATA (retval[i], z_val);
+			zval_add_ref (&z_val);
 			zend_hash_next_index_insert (Z_ARRVAL_P(return_value), &z_val, sizeof(zval *), NULL);
-			z_val = NULL;
+			SEPARATE_ZVAL(&z_val);
 		}
 		free (retval);
 	}
@@ -1827,10 +1829,12 @@ PHP_FUNCTION(newt_checkbox_tree_get_selection)
 
 	array_init (return_value);
 	if (retval) {
+		MAKE_STD_ZVAL (z_val);
 		for (i=0; i < num_items; i++ ) {
 			PHP_NEWT_FETCH_DATA (retval[i], z_val);
+			zval_add_ref (&z_val);
 			zend_hash_next_index_insert (Z_ARRVAL_P(return_value), &z_val, sizeof(zval *), NULL);
-			z_val = NULL;
+			SEPARATE_ZVAL (&z_val);
 		}
 		free (retval);
 	}
@@ -1872,7 +1876,7 @@ PHP_FUNCTION(newt_checkbox_tree_set_current)
 	
 	ZEND_FETCH_RESOURCE(checkboxtree, newtComponent, &z_checkboxtree, -1, le_newt_comp_name, le_newt_comp);
 
-	PHP_NEWT_STORE_DATA (z_data, key);
+	PHP_NEWT_FETCH_KEY (z_data, key);
 	newtCheckboxTreeSetCurrent (checkboxtree, (void *)key);
 }
 #endif
@@ -1906,10 +1910,12 @@ PHP_FUNCTION(newt_checkbox_tree_get_multi_selection)
 
 	array_init (return_value);
 	if (retval) {
+		MAKE_STD_ZVAL (z_val);
 		for (i=0; i < num_items; i++ ) {
 			PHP_NEWT_FETCH_DATA (retval[i], z_val);
+			zval_add_ref (&z_val);
 			zend_hash_next_index_insert (Z_ARRVAL_P(return_value), &z_val, sizeof(zval *), NULL);
-			z_val = NULL;
+			SEPARATE_ZVAL(&z_val);
 		}
 		free (retval);
 	}
@@ -1926,12 +1932,18 @@ PHP_FUNCTION(newt_checkbox_tree_add_item)
 	char *text;
 	int text_len, i;
 	long flags;
+	long index1;
+	long index2;
+	long index3;
+	long index4;
+	long index5;
+	long index6;
 	void **newt_args = NULL;
 	ulong key;
 
 	int argc = ZEND_NUM_ARGS();
 	if (argc < 5) { WRONG_PARAM_COUNT; }
-	if (zend_parse_parameters (argc TSRMLS_CC, "rszl", &z_checkboxtree, &text, &text_len, &z_data, &flags) == FAILURE) {
+	if (zend_parse_parameters (argc TSRMLS_CC, "rszl|llllll", &z_checkboxtree, &text, &text_len, &z_data, &flags) == FAILURE) {
 		return;
 	}
 	
@@ -2039,7 +2051,7 @@ PHP_FUNCTION(newt_checkbox_tree_find_item)
 
 	ZEND_FETCH_RESOURCE(checkboxtree, newtComponent, &z_checkboxtree, -1, le_newt_comp_name, le_newt_comp);
 
-	PHP_NEWT_STORE_DATA (z_data, key);
+	PHP_NEWT_FETCH_KEY (z_data, key);
 	path = newtCheckboxTreeFindItem (checkboxtree, (void *)key);
 
 	array_init (return_value);
@@ -2076,7 +2088,7 @@ PHP_FUNCTION(newt_checkbox_tree_set_entry)
 	
 	ZEND_FETCH_RESOURCE(checkbox_tree, newtComponent, &z_checkbox_tree, -1, le_newt_comp_name, le_newt_comp);
 
-	PHP_NEWT_STORE_DATA (z_data, key);
+	PHP_NEWT_FETCH_KEY (z_data, key);
 	newtCheckboxTreeSetEntry (checkbox_tree, (void *)key, text);
 }
 #endif
@@ -2118,7 +2130,7 @@ PHP_FUNCTION(newt_checkbox_tree_get_entry_value)
 		return;
 	}
 	
-	PHP_NEWT_STORE_DATA (z_data, key);
+	PHP_NEWT_FETCH_KEY (z_data, key);
 
 	ZEND_FETCH_RESOURCE(checkboxtree, newtComponent, &z_checkboxtree, -1, le_newt_comp_name, le_newt_comp);
 	ret_value[0] = newtCheckboxTreeGetEntryValue (checkboxtree, (void *)key);
@@ -2150,7 +2162,7 @@ PHP_FUNCTION(newt_checkbox_tree_set_entry_value)
 		return;
 	}
 	
-	PHP_NEWT_STORE_DATA (z_data, key);
+	PHP_NEWT_FETCH_KEY (z_data, key);
 
 	ZEND_FETCH_RESOURCE(checkboxtree, newtComponent, &z_checkboxtree, -1, le_newt_comp_name, le_newt_comp);
 	newtCheckboxTreeSetEntryValue (checkboxtree, (void *)key, *value);
