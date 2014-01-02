@@ -1,4 +1,4 @@
-dnl $Id: config.m4 190400 2005-07-10 08:06:01Z michael $
+dnl $Id: config.m4 331808 2013-10-13 17:54:46Z remi $
 
 PHP_ARG_WITH(newt, for newt support,
 [  --with-newt             Include newt support (CLI/CGI only)], no)
@@ -32,12 +32,12 @@ if test "$PHP_NEWT" != "no"; then
 
   if test "$PHP_CURSES_DIR" != "no"; then
     for i in $PHP_CURSES_DIR /usr/local /usr; do
-      if test -f $i/lib/libncurses.$SHLIB_SUFFIX_NAME -o -f $i/lib/libncurses.a; then
-				PHP_ADD_LIBRARY_WITH_PATH(ncurses, $i/lib, NEWT_SHARED_LIBADD)
+      if test -f $i/$PHP_LIBDIR/libncurses.$SHLIB_SUFFIX_NAME -o -f $i/$PHP_LIBDIR/libncurses.a; then
+				PHP_ADD_LIBRARY_WITH_PATH(ncurses, $i/$PHP_LIBDIR, NEWT_SHARED_LIBADD)
 				break
 			fi
-      if test -f $i/lib/libcurses.$SHLIB_SUFFIX_NAME -o -f $i/lib/libcurses.a; then
-				PHP_ADD_LIBRARY_WITH_PATH(curses, $i/lib, NEWT_SHARED_LIBADD)
+      if test -f $i/$PHP_LIBDIR/libcurses.$SHLIB_SUFFIX_NAME -o -f $i/$PHP_LIBDIR/libcurses.a; then
+				PHP_ADD_LIBRARY_WITH_PATH(curses, $i/$PHP_LIBDIR, NEWT_SHARED_LIBADD)
 				break
 			fi
     done
@@ -45,8 +45,8 @@ if test "$PHP_NEWT" != "no"; then
 
   if test "$PHP_SLANG_DIR" != "no"; then
     for i in $PHP_SLANG_DIR /usr/local /usr; do
-      if test -f $i/lib/libslang.$SHLIB_SUFFIX_NAME -o -f $i/lib/libslang.a; then
-				PHP_ADD_LIBRARY_WITH_PATH(slang, $i/lib, NEWT_SHARED_LIBADD)
+      if test -f $i/$PHP_LIBDIR/libslang.$SHLIB_SUFFIX_NAME -o -f $i/$PHP_LIBDIR/libslang.a; then
+				PHP_ADD_LIBRARY_WITH_PATH(slang, $i/$PHP_LIBDIR, NEWT_SHARED_LIBADD)
 				break
 			fi
     done
@@ -57,44 +57,44 @@ if test "$PHP_NEWT" != "no"; then
   PHP_CHECK_LIBRARY(newt,newtInit,
   [
     PHP_ADD_INCLUDE($NEWT_DIR/include)
-    PHP_ADD_LIBRARY_WITH_PATH(newt, $NEWT_DIR/lib, NEWT_SHARED_LIBADD)
+    PHP_ADD_LIBRARY_WITH_PATH(newt, $NEWT_DIR/$PHP_LIBDIR, NEWT_SHARED_LIBADD)
     AC_DEFINE(HAVE_NEWTLIB,1,[ ])
   ],[
     AC_MSG_ERROR([newt extension requires libnewt])
   ],[
-    -L$NEWT_DIR/lib
+    -L$NEWT_DIR/$PHP_LIBDIR
   ])
 
   PHP_SUBST(NEWT_SHARED_LIBADD)
 
-  PHP_CHECK_LIBRARY(newt, newtListitem, [AC_DEFINE(HAVE_NEWT_LISTITEM,1,[ ])],, [-L$NEWT_DIR/lib])
-  PHP_CHECK_LIBRARY(newt, newtListitemSet, [AC_DEFINE(HAVE_NEWT_LISTITEM_SET,1,[ ])],, [-L$NEWT_DIR/lib])
-  PHP_CHECK_LIBRARY(newt, newtListitemGetData, [AC_DEFINE(HAVE_NEWT_LISTITEM_GET_DATA,1,[ ])],, [-L$NEWT_DIR/lib])
-  PHP_CHECK_LIBRARY(newt, newtResizeScreen, [AC_DEFINE(HAVE_NEWT_RESIZE_SCREEN,1,[ ])],, [-L$NEWT_DIR/lib])
-  PHP_CHECK_LIBRARY(newt, newtListboxItemCount, [AC_DEFINE(HAVE_NEWT_LISTBOX_ITEM_COUNT,1,[ ])],, [-L$NEWT_DIR/lib])
-  PHP_CHECK_LIBRARY(newt, newtSetHelpCallback, [AC_DEFINE(HAVE_NEWT_SET_HELP_CALLBACK,1,[ ])],, [-L$NEWT_DIR/lib])
-  PHP_CHECK_LIBRARY(newt, newtCursorOff, [AC_DEFINE(HAVE_NEWT_CURSOR_OFF,1,[ ])],, [-L$NEWT_DIR/lib])
-  PHP_CHECK_LIBRARY(newt, newtCursorOn, [AC_DEFINE(HAVE_NEWT_CURSOR_ON,1,[ ])],, [-L$NEWT_DIR/lib])
+  PHP_CHECK_LIBRARY(newt, newtListitem, [AC_DEFINE(HAVE_NEWT_LISTITEM,1,[ ])],, [-L$NEWT_DIR/$PHP_LIBDIR])
+  PHP_CHECK_LIBRARY(newt, newtListitemSet, [AC_DEFINE(HAVE_NEWT_LISTITEM_SET,1,[ ])],, [-L$NEWT_DIR/$PHP_LIBDIR])
+  PHP_CHECK_LIBRARY(newt, newtListitemGetData, [AC_DEFINE(HAVE_NEWT_LISTITEM_GET_DATA,1,[ ])],, [-L$NEWT_DIR/$PHP_LIBDIR])
+  PHP_CHECK_LIBRARY(newt, newtResizeScreen, [AC_DEFINE(HAVE_NEWT_RESIZE_SCREEN,1,[ ])],, [-L$NEWT_DIR/$PHP_LIBDIR])
+  PHP_CHECK_LIBRARY(newt, newtListboxItemCount, [AC_DEFINE(HAVE_NEWT_LISTBOX_ITEM_COUNT,1,[ ])],, [-L$NEWT_DIR/$PHP_LIBDIR])
+  PHP_CHECK_LIBRARY(newt, newtSetHelpCallback, [AC_DEFINE(HAVE_NEWT_SET_HELP_CALLBACK,1,[ ])],, [-L$NEWT_DIR/$PHP_LIBDIR])
+  PHP_CHECK_LIBRARY(newt, newtCursorOff, [AC_DEFINE(HAVE_NEWT_CURSOR_OFF,1,[ ])],, [-L$NEWT_DIR/$PHP_LIBDIR])
+  PHP_CHECK_LIBRARY(newt, newtCursorOn, [AC_DEFINE(HAVE_NEWT_CURSOR_ON,1,[ ])],, [-L$NEWT_DIR/$PHP_LIBDIR])
 
   PHP_CHECK_LIBRARY(newt, newtCheckboxTreeGetCurrent, [
-  	AC_DEFINE(HAVE_NEWT_CHECKBOX_TREE_GET_CURRENT,1,[ ])],, [-L$NEWT_DIR/lib])
+  	AC_DEFINE(HAVE_NEWT_CHECKBOX_TREE_GET_CURRENT,1,[ ])],, [-L$NEWT_DIR/$PHP_LIBDIR])
 
   PHP_CHECK_LIBRARY(newt, newtCheckboxTreeSetCurrent, [
-  	AC_DEFINE(HAVE_NEWT_CHECKBOX_TREE_SET_CURRENT,1,[ ])],, [-L$NEWT_DIR/lib])
+  	AC_DEFINE(HAVE_NEWT_CHECKBOX_TREE_SET_CURRENT,1,[ ])],, [-L$NEWT_DIR/$PHP_LIBDIR])
 
   PHP_CHECK_LIBRARY(newt, newtCheckboxTreeSetEntry, [
-  	AC_DEFINE(HAVE_NEWT_CHECKBOX_TREE_SET_ENTRY,1,[ ])],, [-L$NEWT_DIR/lib])
+  	AC_DEFINE(HAVE_NEWT_CHECKBOX_TREE_SET_ENTRY,1,[ ])],, [-L$NEWT_DIR/$PHP_LIBDIR])
 
   PHP_CHECK_LIBRARY(newt, newtCheckboxTreeSetWidth, [
-  	AC_DEFINE(HAVE_NEWT_CHECKBOX_TREE_SET_WIDTH,1,[ ])],, [-L$NEWT_DIR/lib])
+  	AC_DEFINE(HAVE_NEWT_CHECKBOX_TREE_SET_WIDTH,1,[ ])],, [-L$NEWT_DIR/$PHP_LIBDIR])
 
   PHP_CHECK_LIBRARY(newt, newtCheckboxTreeGetEntryValue, [
-  	AC_DEFINE(HAVE_NEWT_CHECKBOX_TREE_GET_ENTRY_VALUE,1,[ ])],, [-L$NEWT_DIR/lib])
+  	AC_DEFINE(HAVE_NEWT_CHECKBOX_TREE_GET_ENTRY_VALUE,1,[ ])],, [-L$NEWT_DIR/$PHP_LIBDIR])
 
   PHP_CHECK_LIBRARY(newt, newtCheckboxTreeSetEntryValue, [
-  	AC_DEFINE(HAVE_NEWT_CHECKBOX_TREE_SET_ENTRY_VALUE,1,[ ])],, [-L$NEWT_DIR/lib])
+  	AC_DEFINE(HAVE_NEWT_CHECKBOX_TREE_SET_ENTRY_VALUE,1,[ ])],, [-L$NEWT_DIR/$PHP_LIBDIR])
 
-  PHP_CHECK_LIBRARY(newt, newtFormSetTimer, [AC_DEFINE(HAVE_NEWT_FORM_SET_TIMER,1,[ ])],, [-L$NEWT_DIR/lib])
+  PHP_CHECK_LIBRARY(newt, newtFormSetTimer, [AC_DEFINE(HAVE_NEWT_FORM_SET_TIMER,1,[ ])],, [-L$NEWT_DIR/$PHP_LIBDIR])
 
   AC_MSG_CHECKING([if newtExistStruct has u.watch])
 

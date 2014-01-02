@@ -1,4 +1,4 @@
-<?
+<?php
 	newt_init ();
 	newt_cls ();
 	
@@ -6,7 +6,7 @@
 	newt_push_help_line (null);
 	newt_draw_root_text (-30, 0, "(c) 1999-2002 RedHat, Inc");
 
-	newt_get_screen_size (&$rows, &$cols);
+	newt_get_screen_size ($rows, $cols);
 	
 	newt_open_window ($rows/2-17, $cols/2-10, 34, 17, "Choose a Tool");
 

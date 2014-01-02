@@ -1,11 +1,11 @@
-<?
+<?php
 	newt_init ();
 	newt_cls ();
 
 	$options = array("eth0", "eth1", "lo");
 	$option = 1;
 	
-	$rc = newt_win_menu("Network configuration tool", "Which interface to configure?", 30, 0, 20, 6, $options, &$option, "Ok", "Back");
+	$rc = newt_win_menu("Network configuration tool", "Which interface to configure?", 30, 0, 20, 6, $options, $option, "Ok", "Back");
 
 	newt_finished ();
 

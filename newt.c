@@ -16,7 +16,7 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id: newt.c 312452 2011-06-25 09:56:46Z michael $ */
+/* $Id: newt.c 331801 2013-10-13 17:13:01Z remi $ */
 
 #include <newt.h>
 
@@ -44,6 +44,11 @@ ZEND_END_ARG_INFO()
 
 ZEND_BEGIN_ARG_INFO(second_arg_force_ref, 0)
 	ZEND_ARG_PASS_INFO(0)
+	ZEND_ARG_PASS_INFO(1)
+ZEND_END_ARG_INFO()
+
+ZEND_BEGIN_ARG_INFO(both_arg_force_ref, 0)
+	ZEND_ARG_PASS_INFO(1)
 	ZEND_ARG_PASS_INFO(1)
 ZEND_END_ARG_INFO()
 
@@ -135,11 +140,7 @@ zend_function_entry newt_functions[] = {
 #ifdef HAVE_NEWT_LISTITEM_GET_DATA
 	PHP_FE(newt_listitem_get_data,				NULL)
 #endif
-#ifdef all_args_by_ref
-	PHP_FE(newt_get_screen_size,				all_args_by_ref)
-#else
-	PHP_FE(newt_get_screen_size,				NULL)
-#endif
+	PHP_FE(newt_get_screen_size,				both_arg_force_ref)
 	PHP_FE(newt_label,							NULL)
 	PHP_FE(newt_label_set_text,					NULL)
 	PHP_FE(newt_vertical_scrollbar,				NULL)
@@ -248,6 +249,13 @@ zend_function_entry newt_functions[] = {
 };
 /* }}} */
 
+ZEND_DECLARE_MODULE_GLOBALS (newt)
+#if (PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION > 1) || (PHP_MAJOR_VERSION > 5)
+/* This "if" allows PECL builds from this file to be portable to older PHP releases */
+static PHP_GINIT_FUNCTION(newt);
+static PHP_GSHUTDOWN_FUNCTION(newt);
+#endif
+
 /* {{{ newt_module_entry
  */
 zend_module_entry newt_module_entry = {
@@ -260,19 +268,33 @@ zend_module_entry newt_module_entry = {
 	NULL,
 	PHP_MINFO(newt),
 	PHP_NEWT_VERSION,
+#if (PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION > 1) || (PHP_MAJOR_VERSION > 5)
+	/* This check allows PECL builds from this file to be portable to older PHP releases */
+	PHP_MODULE_GLOBALS(newt),
+	PHP_GINIT(newt),
+	PHP_GSHUTDOWN(newt),
+	NULL,
+	STANDARD_MODULE_PROPERTIES_EX
+#else
 	STANDARD_MODULE_PROPERTIES
+#endif
 };
 /* }}} */
-
-ZEND_DECLARE_MODULE_GLOBALS (newt)
 
 #ifdef COMPILE_DL_NEWT
 ZEND_GET_MODULE(newt)
 #endif
 
-/* {{{ php_newt_init_globals
+/* {{{ PHP_GINIT_FUNCTION
+ *
+ * Zerofill globals during module init
  */
+#if (PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION > 1) || (PHP_MAJOR_VERSION > 5)
+/* This check allows PECL builds from this file to be portable to older PHP releases */
+static PHP_GINIT_FUNCTION(newt)
+#else
 static void php_newt_init_globals (zend_newt_globals *newt_globals TSRMLS_DC)
+#endif
 {
 	newt_globals->newt_has_inited = 0;
 
@@ -281,9 +303,16 @@ static void php_newt_init_globals (zend_newt_globals *newt_globals TSRMLS_DC)
 }
 /* }}} */
 
-/* {{{ php_newt_destroy_globals
+/* {{{ PHP_GSHUTDOWN_FUNCTION
+ *
+ * Called for thread shutdown in ZTS, after module shutdown for non-ZTS
  */
+/* This check allows PECL builds from this file to be portable to older PHP releases */
+#if (PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION > 1) || (PHP_MAJOR_VERSION > 5)
+static PHP_GSHUTDOWN_FUNCTION(newt)
+#else
 static void php_newt_destroy_globals(zend_newt_globals *newt_globals TSRMLS_DC)
+#endif
 {
 	if (newt_globals->newt_has_inited) {
 	  newtFinished();
@@ -293,6 +322,7 @@ static void php_newt_destroy_globals(zend_newt_globals *newt_globals TSRMLS_DC)
 	zend_hash_destroy (&newt_globals->data);
 }
 /* }}} */
+
 
 /* {{{ php_newt_free_cb
  */
@@ -396,7 +426,12 @@ PHP_MINIT_FUNCTION(newt)
 	le_newt_comp = zend_register_list_destructors_ex(NULL, NULL, le_newt_comp_name, module_number);
 	le_newt_grid = zend_register_list_destructors_ex(NULL, NULL, le_newt_grid_name, module_number);
 
+#if (PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION > 1) || (PHP_MAJOR_VERSION > 5)
+	/* This check allows PECL builds from this file to be portable to older PHP releases */
+	/* this is handled by new globals management code */
+#else
 	ZEND_INIT_MODULE_GLOBALS (newt, php_newt_init_globals, php_newt_destroy_globals);
+#endif
 
 	/* Colorsets */
 	REGISTER_NEWT_CONSTANT(NEWT_COLORSET_ROOT);
@@ -547,8 +582,11 @@ PHP_MINIT_FUNCTION(newt)
  */
 PHP_MSHUTDOWN_FUNCTION(newt)
 {
+/* Work around PHP_GSHUTDOWN_FUNCTION not being called in older versions of PHP */
+#if (PHP_MAJOR_VERSION == 5 && PHP_MINOR_VERSION < 2) || (PHP_MAJOR_VERSION < 5)
 #ifndef ZTS
 	php_newt_destroy_globals (&newt_globals TSRMLS_CC);
+#endif
 #endif
 
 	return SUCCESS;
@@ -1931,7 +1969,7 @@ PHP_FUNCTION(newt_checkbox_tree_add_item)
 
 	int argc = ZEND_NUM_ARGS();
 	if (argc < 5) { WRONG_PARAM_COUNT; }
-	if (zend_parse_parameters (argc TSRMLS_CC, "rszl", &z_checkboxtree, &text, &text_len, &z_data, &flags) == FAILURE) {
+	if (zend_parse_parameters (4 TSRMLS_CC, "rszl", &z_checkboxtree, &text, &text_len, &z_data, &flags) == FAILURE) {
 		return;
 	}
 	
@@ -1945,7 +1983,7 @@ PHP_FUNCTION(newt_checkbox_tree_add_item)
 
 	PHP_NEWT_STORE_DATA (z_data, key);
 
-	newt_args = (void **) safe_emalloc (argc, sizeof(void *), 0);
+	newt_args = (void **) safe_emalloc (argc+1, sizeof(void *), 0);
 	newt_args[0] = (void *)checkboxtree;
 	newt_args[1] = (void *)text;
 	newt_args[2] = (void *)key;
@@ -1960,8 +1998,9 @@ PHP_FUNCTION(newt_checkbox_tree_add_item)
 		}
 		newt_args[i] = (void *)Z_LVAL_PP(args[i]);
 	}
-
-	newt_vcall ((void *)newtCheckboxTreeAddItem, newt_args, argc);
+	/* add NEWT_ARG_LAST is forgotten by user to avoid segfault, bug #64990 */
+	newt_args[argc] = (void *)NEWT_ARG_LAST;
+	newt_vcall ((void *)newtCheckboxTreeAddItem, newt_args, argc+1);
 
 	efree (newt_args);
 	efree (args);
@@ -3129,7 +3168,7 @@ PHP_FUNCTION(newt_grid_set_field)
 	newtComponent val;
 	long pad_left, pad_top, pad_right, pad_bottom, anchor, flags = 0;
 
-	if (zend_parse_parameters (ZEND_NUM_ARGS() TSRMLS_CC, "rlllrlllll|l", &z_grid, &col, &row, &z_val, &pad_left,
+	if (zend_parse_parameters (ZEND_NUM_ARGS() TSRMLS_CC, "rlllrlllll|l", &z_grid, &col, &row, &type, &z_val, &pad_left,
 				&pad_top, &pad_right, &pad_bottom, &anchor, &flags) == FAILURE) {
 		return;
 	}
@@ -3615,7 +3654,7 @@ PHP_FUNCTION(newt_win_entries)
 
 		items[i].text = Z_STRVAL_PP(z_item_text);
 		strs[i] = Z_STRVAL_PP(z_item_value);
-		items[i].value = (const char **)&strs[i];
+		items[i].value = &strs[i];
 		items[i].flags = (z_item_flags ? Z_LVAL_PP(z_item_flags) : 0);
 
 		i++;

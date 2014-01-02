@@ -1,4 +1,4 @@
-<?
+<?php
 	newt_init ();
 	newt_cls ();
 

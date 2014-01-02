@@ -2,7 +2,7 @@
 
 newt_init ();
 newt_cls ();
-newt_get_screen_size (&$rows, &$cols);
+newt_get_screen_size ($rows, $cols);
 newt_open_window ($rows/2-20, $cols/2-10, 54, 20, "Choose");
 
 $form = newt_form ();
@@ -20,7 +20,7 @@ foreach (array (
 
 newt_form_add_component ($form, $list);
 newt_refresh ();
-newt_form_run ($form, &$res);
+newt_form_run ($form, $res);
 
 $chosen = newt_listbox_get_current($list);
 

@@ -16,7 +16,7 @@
   +----------------------------------------------------------------------+
 */
 
-/* $Id: php_newt.h 312442 2011-06-24 19:35:17Z michael $ */
+/* $Id: php_newt.h 331825 2013-10-14 13:22:20Z michael $ */
 
 #include <newt.h>
 
@@ -26,7 +26,7 @@
 extern zend_module_entry newt_module_entry;
 #define phpext_newt_ptr &newt_module_entry
 
-#define PHP_NEWT_VERSION "1.2.3-dev"
+#define PHP_NEWT_VERSION "1.2.8"
 
 #ifdef PHP_WIN32
 #define PHP_NEWT_API __declspec(dllexport)
@@ -232,8 +232,6 @@ static int newt_entry_filter_callback_wrapper (newtComponent entry, void *cb_key
 static void newt_suspend_callback_wrapper (void *cb_key);
 static void newt_help_callback_wrapper (newtComponent form, char *help);
 
-static void php_newt_init_globals (zend_newt_globals *newt_globals TSRMLS_DC);
-static void php_newt_destroy_globals(zend_newt_globals *newt_globals TSRMLS_DC);
 void php_newt_free_cb (php_newt_cb **cb_ptr);
 int php_newt_fetch_resource (zval *rsrc, void *data, int le_type);
 

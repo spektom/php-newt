@@ -5,8 +5,8 @@ http://pear.php.net/dtd/package-2.0
 http://pear.php.net/dtd/package-2.0.xsd">
  <name>newt</name>
  <channel>pecl.php.net</channel>
- <summary>Extension for RedHat Newt window library</summary>
- <description>PHP-NEWT - PHP language extension for RedHat Newt library, a terminal-based window and widget library for writing applications with user friendly interface.  Once this extension is enabled in PHP it will provide the use of Newt widgets, such as windows, buttons, checkboxes, radiobuttons, labels, editboxes, scrolls, textareas, scales, etc. Use of this extension if very similar to the original Newt API of C programming language.
+ <summary>Extension for Red Hat Newt window library</summary>
+ <description>PHP-NEWT - PHP language extension for Red Hat Newt library, a terminal-based window and widget library for writing applications with user friendly interface.  Once this extension is enabled in PHP it will provide the use of Newt widgets, such as windows, buttons, checkboxes, radiobuttons, labels, editboxes, scrolls, textareas, scales, etc. Use of this extension if very similar to the original Newt API of C programming language.
  </description>
  <lead>
   <name>Michael Spector</name>
@@ -14,11 +14,15 @@ http://pear.php.net/dtd/package-2.0.xsd">
   <email>michael@php.net</email>
   <active>yes</active>
  </lead>
- <date>2011-06-25</date>
- <time>12:56:37</time>
+ <date>2013-10-14</date>
+ <time>15:44:00</time>
  <version>
-  <release>1.2.5</release>
-  <api>1.2.5</api>
+<!--
+     Reminder: don't forget to change PHP_NEWT_VERSION
+     in php_newt.h before release
+-->
+  <release>1.2.8</release>
+  <api>1.2.8</api>
  </version>
  <stability>
   <release>stable</release>
@@ -26,7 +30,8 @@ http://pear.php.net/dtd/package-2.0.xsd">
  </stability>
  <license uri="http://www.php.net/license">PHP License</license>
  <notes>
-Fixed bug #22621 (Segmentation fault when using hot key)
+Fixed bug #64990 - Segmentation Fault @ newt_checkbox_tree_add_item
+Fixed bug #65889 - Provide LICENSE file
  </notes>
  <contents>
   <dir name="/">
@@ -37,12 +42,14 @@ Fixed bug #22621 (Segmentation fault when using hot key)
      <file name="tool.php" role="doc" />
     </dir> <!-- //examples/xslt -->
     <file name="newt_entry_set_filter.php" role="doc" />
+    <file name="newt_listbox.php" role="doc" />
     <file name="newt_win_entries.php" role="doc" />
     <file name="newt_win_menu.php" role="doc" />
     <file name="redhat_netconf_example.php" role="doc" />
    </dir> <!-- //examples -->
    <file name="config.m4" role="src" />
    <file name="CREDITS" role="doc" />
+   <file name="LICENSE" role="doc" />
    <file name="newt.c" role="src" />
    <file name="newt_vcall.c" role="src" />
    <file name="newt_vcall.h" role="src" />
